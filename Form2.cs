@@ -13,13 +13,16 @@ namespace Calculator
 {
     public partial class Form2 : Form
     {
-        string operation = "";
-        double result;
-        bool performedOperation = false;
-        bool isDisplayString = false;
-        List<Double> memoryList = new();
-        int memoryIndex;
-        double memory;
+        string operation = ""; // Global operasyon ismi değişkeni
+        double result; // Num1,Num2 yerine result ve txtDisplay.Text ile çalışılacak.
+        // result sonuç değeri olabilir, ilk girilen sayı olabilir. Bundan dolayı txtDisplay.Text duruma göre
+        // hem 1. hem 2. sayı olabilir.
+        bool performedOperation = false; // Ekrana bir işlem yapıldıktan sonra sayı girilince önceki sayı 
+        // silinmeli ve yerine basılan değerler girilmeli.
+        bool displayHasErrorText = false; // Ekranda sayı yerine hata mesajının olup olmadığının bool değeri
+        List<Double> memoryList = new(); // Hafızaya kaydedilen bütün değerler
+        int memoryIndex; // index ile çalışmamız gerektiği için memoryIndex değişkeni
+        double memory; // Duruma göre ilgili indexteki memory değeri değişebilir. Bu yüzden ayrı bir değişken de gerekli
         public Form2()
         {
             InitializeComponent();
@@ -27,12 +30,12 @@ namespace Calculator
 
         private void Off_Operation(object sender, EventArgs e)
         {
-            Application.Exit();
+            Application.Exit(); // Off butonuna basılınca uygulamanın kapatılması
         }
 
         private void Numeric_Values(object sender, EventArgs e)
         {
-            CheckIsDisplay();
+            CheckDisplayText();
 
             if (txtDisplay.Text == "0" || performedOperation) txtDisplay.Clear();
 
@@ -49,7 +52,7 @@ namespace Calculator
 
         private void OpClear(object sender, EventArgs e)
         {
-            CheckIsDisplay();
+            CheckDisplayText();
 
 
             if (txtDisplay.Text == "0")
@@ -63,7 +66,7 @@ namespace Calculator
 
         private void SingleNumber_Operations(object sender, EventArgs e)
         {
-            CheckIsDisplay();
+            CheckDisplayText();
 
             Button button = (Button)sender;
 
@@ -77,7 +80,7 @@ namespace Calculator
                     if (txtDisplay.Text == "0")
                     {
                         txtDisplay.Text = "Sıfır ile işlem yapılamaz";
-                        isDisplayString = true;
+                        displayHasErrorText = true;
                         break;
                     }
 
@@ -90,7 +93,7 @@ namespace Calculator
                     {
                         //txtDisplay.TextAlign = HorizontalAlignment.Center;
                         txtDisplay.Text = "Sıfıra bölünemez";
-                        isDisplayString = true;
+                        displayHasErrorText = true;
                         break;
                     }
                     lblOp.Text = $"1/({txtDisplay.Text})";
@@ -151,7 +154,7 @@ namespace Calculator
         private void OpEquals_Click(object sender, EventArgs e)
         {
 
-            CheckIsDisplay();
+            CheckDisplayText();
 
             switch (operation)
             {
@@ -172,7 +175,7 @@ namespace Calculator
                         //txtDisplay.TextAlign = HorizontalAlignment.Center;
 
                         txtDisplay.Text = "Sıfıra bölünemez";
-                        isDisplayString = true;
+                        displayHasErrorText = true;
 
                         break;
                     }
@@ -186,7 +189,7 @@ namespace Calculator
                     break;
             }
 
-            if (isDisplayString)
+            if (displayHasErrorText)
             {
                 DisableButtons();
             }
@@ -404,16 +407,16 @@ namespace Calculator
 
         }
 
-        private void CheckIsDisplay()
+        private void CheckDisplayText()
         {
-            if (isDisplayString)
+            if (displayHasErrorText)
             {
                 txtDisplay.Text = "0";
                 lblOp.Text = "";
                 result = 0;
 
                 performedOperation = false;
-                isDisplayString = false;
+                displayHasErrorText = false;
 
                 bOpPercent.Enabled = true;
                 bOpDivideX.Enabled = true;
@@ -446,9 +449,5 @@ namespace Calculator
             bOpPlusMinus.Enabled = false;
             bEquals.Enabled = false;
         }
-
-
-
-
     }
 }
